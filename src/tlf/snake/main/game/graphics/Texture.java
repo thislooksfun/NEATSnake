@@ -29,11 +29,8 @@ public class Texture
 		int[] pixels = null;
 		try
 		{
-			System.out.println("1");
 			FileInputStream fis = new FileInputStream(path);
-			System.out.println("2");
 			BufferedImage image = ImageIO.read(fis);
-			System.out.println("3");
 			width = image.getWidth();
 			height = image.getHeight();
 			pixels = new int[width * height];

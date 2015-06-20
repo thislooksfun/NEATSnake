@@ -2,7 +2,6 @@ package tlf.snake.main;
 
 import tlf.snake.main.game.entity.Snake;
 import tlf.snake.main.game.helper.Pos;
-import tlf.snake.main.game.helper.Text;
 import tlf.snake.main.game.tiles.Food;
 import tlf.snake.main.game.tiles.Tile;
 import tlf.snake.main.game.tiles.Wall;
@@ -109,7 +108,7 @@ public class Game
 				if (t != null)
 					t.draw();
 		
-		Text.draw("Hi!", 10, 10);
+		//Text.draw("Hi!", 10, 10);
 	}
 	
 	public void lose()

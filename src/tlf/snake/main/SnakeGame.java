@@ -2,7 +2,6 @@ package tlf.snake.main;
 
 
 import tlf.snake.main.game.helper.Pos;
-import tlf.snake.main.game.helper.Text;
 import tlf.snake.main.game.input.Input;
 
 import java.nio.ByteBuffer;
@@ -51,7 +50,6 @@ public class SnakeGame
 	{
 		if (glfwInit() != GL_TRUE) {
 			System.out.println("Error initializing");
-			//TODO handle
 			return;
 		}
 		
@@ -61,7 +59,6 @@ public class SnakeGame
 		
 		if (window == NULL) {
 			System.out.println("Error creating window");
-			//TODO handle
 			return;
 		}
 		
@@ -83,7 +80,7 @@ public class SnakeGame
 		running = true;
 		resized = true;
 		
-		Text.init();
+		//Text.init();
 		game.start();
 	}
 	

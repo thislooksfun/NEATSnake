@@ -22,6 +22,8 @@ public class Text
 	}
 	public static void draw(String s, int x, int y, int scale)
 	{
+		if (text == null) init();
+		
 		text.bind();
 		glPushMatrix();
 		
