@@ -14,6 +14,6 @@ public class Food extends Tile
 	}
 	public Food(Pos p)
 	{
-		super(p, new Color(0xcc, 0, 0), new Color(0xee, 0, 0));
+		super(p, Color.rgb(0xcc, 0, 0), Color.rgb(0xee, 0, 0));
 	}
 }

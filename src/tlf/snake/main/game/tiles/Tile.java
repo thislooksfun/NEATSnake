@@ -14,8 +14,8 @@ public class Tile extends Drawable
 	/** The position of this tile */
 	protected Pos pos;
 	
-	private final Color outerColor;
-	private final Color innerColor;
+	protected final Color outerColor;
+	protected final Color innerColor;
 	
 	public Tile(Pos p, Color outer, Color inner)
 	{

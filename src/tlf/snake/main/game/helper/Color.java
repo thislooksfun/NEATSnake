@@ -1,44 +1,38 @@
 package tlf.snake.main.game.helper;
 
+import tlf.snake.main.game.util.MathUtil;
+
+import static org.lwjgl.opengl.GL11.*;
+
 /**
  * @author thislooksfun
  */
 public class Color
 {
-	public static final Color BLACK = new Color(0,   0,   0);
-	public static final Color WHITE = new Color(255, 255, 255);
-	public static final Color RED =   new Color(255, 0,   0);
-	public static final Color GREEN = new Color(0,   255, 0);
-	public static final Color BLUE =  new Color(0,   0,   255);
+	public static final Color BLACK =   gray(0);
+	public static final Color WHITE =   gray(255);
+	public static final Color RED =     rgb(255, 0, 0);
+	public static final Color GREEN =   rgb(0, 255, 0);
+	public static final Color BLUE =    rgb(0, 0, 255);
+	public static final Color GRAYOUT = gray(70);
 	
 	public final int red;
 	public final int green;
 	public final int blue;
-	public final int transp;
+	public final int alpha;
 	
-	public Color(int r, int g, int b)
+	private Color(int r, int g, int b, int t)
 	{
 		this.red =    clampColor(r);
 		this.green =  clampColor(g);
 		this.blue =   clampColor(b);
-		this.transp = 255;
+		this.alpha = clampColor(t);
 	}
 	
-	public Color(int r, int g, int b, int t)
-	{
-		this.red =    clampColor(r);
-		this.green =  clampColor(g);
-		this.blue =   clampColor(b);
-		this.transp = clampColor(t);
-	}
-	
-	public Color(int color)
-	{
-		this.transp = clampColor(color & 0xFF000000);
-		this.red =    clampColor(color & 0x00FF0000);
-		this.green =  clampColor(color & 0x0000FF00);
-		this.blue =   clampColor(color & 0x000000FF);
-	}
+	public static Color rgb(int r, int g, int b) { return rgba(r, g, b, 255); }
+	public static Color rgba(int r, int g, int b, int a) { return new Color(r, g, b, a); }
+	public static Color gray(int gray) { return gray(gray, 255); }
+	public static Color gray(int gray, int a)  { return new Color(gray, gray, gray, a); }
 	
 	public static Color fromHex(String hex)
 	{
@@ -48,7 +42,7 @@ public class Color
 				r = Integer.parseInt(hex.substring(0,1)+hex.substring(0,1), 16);
 				g = Integer.parseInt(hex.substring(1,2)+hex.substring(1,2), 16);
 				b = Integer.parseInt(hex.substring(2,3)+hex.substring(2,3), 16);
-				return new Color(r, g, b);
+				return new Color(r, g, b, 255);
 			case 4:
 				r = Integer.parseInt(hex.substring(0,1)+hex.substring(0,1), 16);
 				g = Integer.parseInt(hex.substring(1,2)+hex.substring(1,2), 16);
@@ -59,7 +53,7 @@ public class Color
 				r = Integer.parseInt(hex.substring(0,2), 16);
 				g = Integer.parseInt(hex.substring(2,4), 16);
 				b = Integer.parseInt(hex.substring(4,6), 16);
-				return new Color(r, g, b);
+				return new Color(r, g, b, 255);
 			case 8:
 				r = Integer.parseInt(hex.substring(0,2), 16);
 				g = Integer.parseInt(hex.substring(2,4), 16);
@@ -71,21 +65,20 @@ public class Color
 		}
 	}
 	
-	private static int clampColor(int c)
-	{
-		return clamp(c, 0, 255);
+	private static int clampColor(int c) { return MathUtil.clamp(c, 0, 255); }
+	
+	public Color adjustShade(int red, int green, int blue, int alpha) {
+		return new Color(this.red+red, this.green+green, this.blue+blue, this.alpha+alpha);
 	}
 	
-	private static int clamp(int x, int min, int max)
+	/** Binds this color to the current GL context, enabling transparency as needed */
+	public void bind()
 	{
-		if (x < min) return min;
-		else if (x > max) return max;
-		
-		return x;
-	}
-	
-	public Color adjustShade(int red, int green, int blue, int transp)
-	{
-		return new Color(this.red+red, this.green+green, this.blue+blue, this.transp+transp);
+		if (this.alpha < 255) {
+			//Enable transparency support
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
+		glColor4f(this.red / 255.0f, this.green / 255.0f, this.blue / 255.0f, this.alpha / 255.0f); //Set color
 	}
 }

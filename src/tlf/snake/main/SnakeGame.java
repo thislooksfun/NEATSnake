@@ -8,11 +8,8 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.glfw.GLFWWindowPosCallback;
-import org.lwjgl.glfw.GLFWWindowSizeCallback;
-import org.lwjgl.glfw.GLFWvidmode;
+import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GLContext;
-import static org.lwjgl.glfw.Callbacks.glfwSetCallback;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -25,10 +22,9 @@ public class SnakeGame
 	private static final Game game = new Game();
 	
 	private int WIDTH = game.gameWidth*15;
-	private int HEIGHT = game.gameHeight*15;
+	private int HEIGHT = (game.gameHeight*15) + 45;
 	
-	private static final int MINWIDTH = game.gameWidth*10;
-	private static final int MINHEIGHT = game.gameHeight*10;
+	private static GLFWKeyCallback keyCallback;
 	
 	private Pos lastPos;
 	
@@ -70,7 +66,7 @@ public class SnakeGame
 		
 		GLContext.createFromCurrent();
 		
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0f, 0f, 0f, 1f);
 		glDepthFunc(GL_NEVER);
 		glDisable(GL_DEPTH_TEST);
 		
@@ -80,48 +76,12 @@ public class SnakeGame
 		running = true;
 		resized = true;
 		
-		//Text.init();
-		game.start();
+		game.init();
 	}
 	
 	private void initCallbacks()
 	{
-		glfwSetCallback(window, GLFWWindowSizeCallback(new GLFWWindowSizeCallback.SAM()
-		{
-			@Override
-			public void invoke(long window, int width, int height)
-			{
-				resized = true;
-				WIDTH = width;
-				HEIGHT = height;
-				
-				if (width < MINWIDTH && height >= MINHEIGHT) {
-					glfwSetWindowSize(window, MINWIDTH, height);
-					glfwSetWindowPos(window, lastPos.x-10, lastPos.y);
-				} else if (width >= MINWIDTH && height < MINHEIGHT) {
-					glfwSetWindowSize(window, width, MINHEIGHT);
-					glfwSetWindowPos(window, lastPos.x-10, lastPos.y);
-				} else if (width < MINWIDTH && height < MINHEIGHT) {
-					glfwSetWindowSize(window, MINWIDTH, MINHEIGHT);
-					glfwSetWindowPos(window, lastPos.x-10, lastPos.y);
-				} else
-					lastPos = getWindowPos();
-				
-				render();
-				setOrtho();
-			}
-		}));
-		
-		glfwSetCallback(window, GLFWWindowPosCallback(new GLFWWindowPosCallback.SAM()
-		{
-			@Override
-			public void invoke(long window, int xpos, int ypos)
-			{
-				lastPos = new Pos(xpos, ypos);
-			}
-		}));
-		
-		glfwSetKeyCallback(window, new Input());
+		glfwSetKeyCallback(window, keyCallback = new Input());
 	}
 	
 	private Pos getWindowPos()
@@ -137,7 +97,7 @@ public class SnakeGame
 	{
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(0, WIDTH, HEIGHT, 0, 1, -1);
+		glOrtho(0, WIDTH, HEIGHT-45, -45, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
 	}
 	
@@ -152,6 +112,12 @@ public class SnakeGame
 				running = false;
 			}
 		}
+	}
+	
+	private void exit()
+	{
+		
+		glfwDestroyWindow(window);
 	}
 	
 	private void update()
@@ -192,6 +158,14 @@ public class SnakeGame
 	public int tileSize()
 	{
 		return size;
+	}
+	public int width()
+	{
+		return WIDTH;
+	}
+	public int height()
+	{
+		return HEIGHT;
 	}
 	
 	public void stop()
